@@ -1,1 +1,6 @@
 .DS_Store
+**/*.o
+**/*.out
+assembler/assembler
+VM/vm
+tools/bin/*.dat
