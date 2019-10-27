@@ -16,4 +16,14 @@ CHIP RAM512 {
 
     PARTS:
     // Put your code here:
+    DMux8Way(in=load, sel=address[0..2], a=sel000, b=sel001, c=sel010, d=sel011, e=sel100, f=sel101, g=sel110, h=sel111);
+    RAM64(in=in, load=sel000, address=address[3..8], out=r000);
+    RAM64(in=in, load=sel001, address=address[3..8], out=r001);
+    RAM64(in=in, load=sel010, address=address[3..8], out=r010);
+    RAM64(in=in, load=sel011, address=address[3..8], out=r011);
+    RAM64(in=in, load=sel100, address=address[3..8], out=r100);
+    RAM64(in=in, load=sel101, address=address[3..8], out=r101);
+    RAM64(in=in, load=sel110, address=address[3..8], out=r110);
+    RAM64(in=in, load=sel111, address=address[3..8], out=r111);
+    Mux8Way16(a=r000, b=r001, c=r010, d=r011, e=r100, f=r101, g=r110, h=r111, sel=address[0..2], out=out);
 }
