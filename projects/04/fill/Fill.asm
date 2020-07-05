@@ -12,3 +12,50 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+
+// Continuously loop through screen
+(INIT)
+    // Initialize i
+    @SCREEN
+    D=A
+    @i
+    M=D
+
+    // Initialize max
+    @8192 // 32 * 256
+    D=A+D
+    @max
+    M=D
+(LOOP)
+    // TODO: Set D to color based on keyboard input
+    @KBD
+    D=M
+    @SETBLACK
+    D;JGT
+
+(DRAW)
+    // Set current position to color stored in D
+    @i
+    A=M
+    M=D
+
+    // Increment i
+    D=A+1
+    @i
+    M=D
+
+    // If end reached, start over from start
+    @max
+    D=D-M
+    @INIT
+    D;JGT
+
+    // Otherwise, keep looping
+    @LOOP
+    0;JMP
+
+(SETBLACK)
+    D=0
+    D=!D
+    @DRAW
+    0;JMP
