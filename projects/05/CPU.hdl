@@ -40,4 +40,46 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+
+    // TODO: Create separate CU.hdl(?)
+    
+    // Decode instruction ixxaccccccdddjjj
+    // i == 0 -> A (Just load 15 LSBs into A register)
+    // i == 1 -> C (ALU operation depends on acccccc bits)
+    // a == 0 -> use A as "y" operand, a == 1 -> use M as "y" operand
+
+    // ARegister should store
+    //   -> alu if d1 == 1
+    //   -> instruction if it is an A instruction
+    Not(in=instruction[15], out=ainstr);
+    Or(a=ainstr,b=instruction[5], out=loada);
+    Mux16(a=alu, b=instruction, sel=ainstr, out=ain);
+    ARegister(in=ain, load=loada, out=a);
+
+    // DRegister should store alu output if C and d2 == 1
+    And(a=instruction[15], b=instruction[4], out=loadd);
+    DRegister(in=alu, load=loadd, out=d);
+
+    // Should writeM if C and d3 == 1
+    And(a=instruction[15], b=instruction[3], out=writeM);
+    
+    // Output addressM and outM
+    And16(a=a, b=true, out[0..14]=addressM);
+    And16(a=alu, b=true, out=outM);
+
+    // Check jump conditions
+    Not(in=zr, out=nzr);
+    Not(in=ng, out=nng);
+    And(a=nng, b=nzr, out=pos);
+    And(a=instruction[2], b=ng, out=j1);
+    And(a=instruction[1], b=zr, out=j2);
+    And(a=instruction[0], b=pos, out=j3);
+    Or(a=j1, b=j2, out=j1orj2);
+    Or(a=j1orj2, b=j3, out=j1j2j3);
+    And(a=j1j2j3, b=instruction[15], out=jmp); // Make sure it is a C instruction
+    Not(in=jmp, out=inc);
+    PC(in=a, load=jmp, inc=inc, reset=reset, out[0..14]=pc);
+
+    Mux16(a=a, b=inM, sel=instruction[12], out=aorm);
+    ALU(x=d, y=aorm, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=alu, zr=zr, ng=ng);
 }

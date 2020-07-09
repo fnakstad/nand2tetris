@@ -27,5 +27,23 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // Data memory space
+    Not(in=address[14], out=na14);
+    And(a=na14, b=load, out=l1);
+    RAM16K(in=in, load=l1, address=address[0..13], out=r1);
+
+    // Memory mapped I/O
+    // 100000000000000~101111111111111 -> Screen
+    // 110000000000000 -> keyboard
+
+    Not(in=address[13], out=na13);
+    And(a=address[14], b=na13, out=screenaccess);
+    And(a=screenaccess, b=load, out=screenload);
+
+    Screen(in=in, load=screenload, address=address[0..12], out=screenout);
+    Keyboard(out=keyout);
+    Mux16(a=screenout, b=keyout, sel=address[13], out=r2);
+
+    // Select correct value to output
+    Mux16(a=r1, b=r2, sel=address[14], out=out);
 }
