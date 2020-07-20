@@ -33,7 +33,9 @@ func main() {
 
 	cw := NewCodeWriter(outf)
 	for _, vmfile := range vmfiles {
-		processVMFile(vmfile, cw)
+		if err := processVMFile(vmfile, cw); err != nil {
+			log.Fatalf("error processing vm file: %v", err)
+		}
 	}
 }
 

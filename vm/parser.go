@@ -68,7 +68,7 @@ func (p *Parser) Parse() bool {
 		return false
 	}
 
-	cmdType, ok := tokenCommandMapping[tokens[0]]
+	cmdType, ok := tokenCommandMap[tokens[0]]
 	if !ok {
 		p.err = fmt.Errorf("unrecognized token: %s", tokens[0])
 		return false

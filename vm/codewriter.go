@@ -7,18 +7,76 @@ import (
 )
 
 var (
-	asmMap = map[CommandType][]string{
-		CommandTypePush: []string{
-			"// push",
-			"@%d",
-			"D=A",
-			"@SP",
-			"A=M",
-			"M=D",
-			"@SP",
-			"M=M+1",
-			"",
-		},
+	asmPushConstant = []string{
+		"// push constant",
+		"@%d",
+		"D=A",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
+		"",
+	}
+	asmPushLATT = []string{
+		"// push",
+		"@%[2]s",
+		"D=M",
+		"@%[1]d",
+		"A=A+D",
+		"D=M",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
+	}
+	asmPushTP = []string{
+		"// push",
+		"@%[1]d",
+		"D=A",
+		"@%[2]s",
+		"A=A+D",
+		"D=M",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
+	}
+	asmPopLATT = []string{
+		"// pop",
+		"@%[2]s",
+		"D=M",
+		"@%[1]d",
+		"D=A+D",
+		"@R13",
+		"M=D",
+		"@SP",
+		"AM=M-1",
+		"D=M",
+		"@R13",
+		"A=M",
+		"M=D",
+		"",
+	}
+	asmPopTP = []string{
+		"// pop",
+		"@%[1]d",
+		"D=A",
+		"@%[2]s",
+		"D=A+D",
+		"@R13",
+		"M=D",
+		"@SP",
+		"AM=M-1",
+		"D=M",
+		"@R13",
+		"A=M",
+		"M=D",
+		"",
+	}
+	asmArithmeticMap = map[CommandType][]string{
 		CommandTypeAdd: []string{
 			"// add",
 			"@SP",
@@ -138,21 +196,55 @@ func (cw *CodeWriter) WriteArithmetic(cmdType CommandType) error {
 	case CommandTypeGt, CommandTypeLt, CommandTypeEq:
 		count := cw.lc[cmdType]
 		cw.lc[cmdType]++
-		asm = fmt.Sprintf(strings.Join(asmMap[cmdType], "\n"), count)
+		asm = fmt.Sprintf(strings.Join(asmArithmeticMap[cmdType], "\n"), count)
 	default:
 		// TODO: check for non-existent key
-		asm = strings.Join(asmMap[cmdType], "\n")
+		asm = strings.Join(asmArithmeticMap[cmdType], "\n")
 	}
 
 	return cw.writeCommand(asm)
 }
 
 func (cw *CodeWriter) WritePushPop(cmdType CommandType, segmentType SegmentType, index int) error {
-	asmStrings := asmMap[cmdType]
-	switch segmentType {
-	case SegmentTypeConstant:
-		asm := fmt.Sprintf(strings.Join(asmStrings, "\n"), index)
-		return cw.writeCommand(asm)
+	// log.Printf("%s %s %d", cmdType, segmentType, index)
+	switch cmdType {
+	case CommandTypePush:
+		switch segmentType {
+		case SegmentTypeConstant:
+			asm := fmt.Sprintf(strings.Join(asmPushConstant, "\n"), index)
+			return cw.writeCommand(asm)
+		case SegmentTypeLocal, SegmentTypeArgument, SegmentTypeThis, SegmentTypeThat:
+			segmentBase, ok := segmentBaseMap[segmentType]
+			if !ok {
+				return fmt.Errorf("can't find segment base for type %v", segmentBase)
+			}
+			asm := fmt.Sprintf(strings.Join(asmPushLATT, "\n"), index, segmentBase)
+			return cw.writeCommand(asm)
+		case SegmentTypeTemp, SegmentTypePointer:
+			segmentBase, ok := segmentBaseMap[segmentType]
+			if !ok {
+				return fmt.Errorf("can't find segment base for type %v", segmentBase)
+			}
+			asm := fmt.Sprintf(strings.Join(asmPushTP, "\n"), index, segmentBase)
+			return cw.writeCommand(asm)
+		}
+	case CommandTypePop:
+		switch segmentType {
+		case SegmentTypeLocal, SegmentTypeArgument, SegmentTypeThis, SegmentTypeThat:
+			segmentBase, ok := segmentBaseMap[segmentType]
+			if !ok {
+				return fmt.Errorf("can't find segment base for type %v", segmentBase)
+			}
+			asm := fmt.Sprintf(strings.Join(asmPopLATT, "\n"), index, segmentBase)
+			return cw.writeCommand(asm)
+		case SegmentTypeTemp, SegmentTypePointer:
+			segmentBase, ok := segmentBaseMap[segmentType]
+			if !ok {
+				return fmt.Errorf("can't find segment base for type %v", segmentBase)
+			}
+			asm := fmt.Sprintf(strings.Join(asmPopTP, "\n"), index, segmentBase)
+			return cw.writeCommand(asm)
+		}
 	}
 
 	return nil

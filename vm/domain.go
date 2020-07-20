@@ -21,8 +21,8 @@ const (
 	CommandTypePop      = "pop"
 	CommandTypeLabel    = "label"
 	CommandTypeGoto     = "goto"
-	CommandTypeIf       = "if"
-	CommandTypeFunction = "func"
+	CommandTypeIf       = "if-goto"
+	CommandTypeFunction = "function"
 	CommandTypeReturn   = "return"
 	CommandTypeCall     = "call"
 )
@@ -31,7 +31,14 @@ type SegmentType string
 
 const (
 	SegmentTypeUnknown  SegmentType = ""
+	SegmentTypeArgument             = "argument"
+	SegmentTypeLocal                = "local"
+	SegmentTypeStatic               = "static"
 	SegmentTypeConstant             = "constant"
+	SegmentTypeThis                 = "this"
+	SegmentTypeThat                 = "that"
+	SegmentTypePointer              = "pointer"
+	SegmentTypeTemp                 = "temp"
 )
 
 var (
@@ -46,7 +53,7 @@ var (
 		CommandTypeOr:  struct{}{},
 		CommandTypeNot: struct{}{},
 	}
-	tokenCommandMapping = map[string]CommandType{
+	tokenCommandMap = map[string]CommandType{
 		"add":  CommandTypeAdd,
 		"sub":  CommandTypeSub,
 		"neg":  CommandTypeNeg,
@@ -58,5 +65,13 @@ var (
 		"not":  CommandTypeNot,
 		"push": CommandTypePush,
 		"pop":  CommandTypePop,
+	}
+	segmentBaseMap = map[SegmentType]string{
+		SegmentTypeLocal:    "LCL",
+		SegmentTypeArgument: "ARG",
+		SegmentTypeThis:     "THIS",
+		SegmentTypeThat:     "THAT",
+		SegmentTypeTemp:     "R5",
+		SegmentTypePointer:  "R14",
 	}
 )
