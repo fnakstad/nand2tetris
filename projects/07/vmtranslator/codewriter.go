@@ -3,24 +3,23 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"strings"
 )
 
 var (
-	asmPush = []string{
-		"// push",
-		"@%d",
-		"D=A",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
-		"",
-	}
-	asmArithmetic = map[string][]string{
-		"add": []string{
+	asmMap = map[CommandType][]string{
+		CommandTypePush: []string{
+			"// push",
+			"@%d",
+			"D=A",
+			"@SP",
+			"A=M",
+			"M=D",
+			"@SP",
+			"M=M+1",
+			"",
+		},
+		CommandTypeAdd: []string{
 			"// add",
 			"@SP",
 			"AM=M-1",
@@ -29,7 +28,7 @@ var (
 			"M=D+M",
 			"",
 		},
-		"sub": []string{
+		CommandTypeSub: []string{
 			"// sub",
 			"@SP",
 			"AM=M-1",
@@ -38,14 +37,14 @@ var (
 			"M=M-D",
 			"",
 		},
-		"neg": []string{
+		CommandTypeNeg: []string{
 			"// neg",
 			"@SP",
 			"A=M-1",
 			"M=-M",
 			"",
 		},
-		"eq": []string{
+		CommandTypeEq: []string{
 			"// eq",
 			"@SP",
 			"AM=M-1",
@@ -61,7 +60,7 @@ var (
 			"(EQ_%[1]d)",
 			"",
 		},
-		"gt": []string{
+		CommandTypeGt: []string{
 			"// gt",
 			"@SP",
 			"AM=M-1",
@@ -77,7 +76,7 @@ var (
 			"(GT_%[1]d)",
 			"",
 		},
-		"lt": []string{
+		CommandTypeLt: []string{
 			"// lt",
 			"@SP",
 			"AM=M-1",
@@ -93,7 +92,7 @@ var (
 			"(LT_%[1]d)",
 			"",
 		},
-		"and": []string{
+		CommandTypeAnd: []string{
 			"// and",
 			"@SP",
 			"AM=M-1",
@@ -102,7 +101,7 @@ var (
 			"M=D&M",
 			"",
 		},
-		"or": []string{
+		CommandTypeOr: []string{
 			"// or",
 			"@SP",
 			"AM=M-1",
@@ -111,7 +110,7 @@ var (
 			"M=D|M",
 			"",
 		},
-		"not": []string{
+		CommandTypeNot: []string{
 			"// not",
 			"@SP",
 			"A=M-1",
@@ -123,45 +122,43 @@ var (
 
 type CodeWriter struct {
 	w  io.Writer
-	lc map[string]uint8
+	lc map[CommandType]uint8
 }
 
 func NewCodeWriter(w io.Writer) *CodeWriter {
 	return &CodeWriter{
 		w:  w,
-		lc: make(map[string]uint8),
+		lc: make(map[CommandType]uint8),
 	}
 }
 
-func (cw *CodeWriter) WriteArithmetic(cmd string) {
+func (cw *CodeWriter) WriteArithmetic(cmdType CommandType) error {
 	var asm string
-	switch cmd {
-	case "gt", "lt", "eq":
-		count := cw.lc[cmd]
-		cw.lc[cmd]++
-		asm = fmt.Sprintf(strings.Join(asmArithmetic[cmd], "\n"), count)
+	switch cmdType {
+	case CommandTypeGt, CommandTypeLt, CommandTypeEq:
+		count := cw.lc[cmdType]
+		cw.lc[cmdType]++
+		asm = fmt.Sprintf(strings.Join(asmMap[cmdType], "\n"), count)
 	default:
 		// TODO: check for non-existent key
-		asm = strings.Join(asmArithmetic[cmd], "\n")
+		asm = strings.Join(asmMap[cmdType], "\n")
 	}
 
-	_, err := io.WriteString(cw.w, asm)
-	if err != nil {
-		log.Fatalf("nooo: %v", err)
-	}
+	return cw.writeCommand(asm)
 }
 
-func (cw *CodeWriter) WritePushPop(cmdType CommandType, segment string, index int) {
-	switch cmdType {
-	case CommandTypePush:
-		if segment == "constant" {
-			asm := fmt.Sprintf(strings.Join(asmPush, "\n"), index)
-			_, err := io.WriteString(cw.w, asm)
-			if err != nil {
-				log.Fatalf("nooo: %v", err)
-			}
-		}
-	case CommandTypePop:
-		log.Println("pop")
+func (cw *CodeWriter) WritePushPop(cmdType CommandType, segmentType SegmentType, index int) error {
+	asmStrings := asmMap[cmdType]
+	switch segmentType {
+	case SegmentTypeConstant:
+		asm := fmt.Sprintf(strings.Join(asmStrings, "\n"), index)
+		return cw.writeCommand(asm)
 	}
+
+	return nil
+}
+
+func (cw *CodeWriter) writeCommand(cmd string) error {
+	_, err := io.WriteString(cw.w, cmd)
+	return err
 }

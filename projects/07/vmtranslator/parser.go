@@ -75,9 +75,10 @@ func (p *Parser) Parse() bool {
 	}
 	p.cmdType = cmdType
 
-	switch cmdType {
-	case CommandTypeArithmetic:
+	if _, ok := arithmeticCommand[p.CommandType()]; ok {
 		p.arg1 = tokens[0]
+	}
+	switch cmdType {
 	case CommandTypePush, CommandTypePop:
 		if len(tokens) < 3 {
 			p.err = fmt.Errorf("not enough args: %s", text)
@@ -93,9 +94,9 @@ func (p *Parser) Parse() bool {
 		}
 
 		p.arg2 = arg2
-	default:
-		p.err = fmt.Errorf("unrecognized command type: %d", cmdType)
-		return false
+		// default:
+		// 	p.err = fmt.Errorf("unrecognized command type: %d", cmdType)
+		// 	return false
 	}
 
 	return true

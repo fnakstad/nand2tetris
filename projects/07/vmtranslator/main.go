@@ -7,6 +7,10 @@ import (
 	"path"
 )
 
+const (
+	vmext = ".vm"
+)
+
 func main() {
 	if len(os.Args) < 3 {
 		log.Fatalf("not enough arguments")
@@ -28,41 +32,49 @@ func main() {
 	defer outf.Close()
 
 	cw := NewCodeWriter(outf)
-
-	// log.Println(vmfiles)
 	for _, vmfile := range vmfiles {
-		log.Println(vmfile)
-
-		f, err := os.Open(vmfile)
-		if err != nil {
-			log.Fatalf("error reading file: %v", err)
-		}
-		defer f.Close()
-
-		p := NewParser(f)
-		for p.Parse() {
-			switch p.CommandType() {
-			case CommandTypeArithmetic:
-				cw.WriteArithmetic(p.Arg1())
-			case CommandTypePush, CommandTypePop:
-				cw.WritePushPop(p.CommandType(), p.Arg1(), p.Arg2())
-			default:
-				log.Fatalf("unimplemented command: %d", p.CommandType())
-			}
-			// log.Println("h")
-			// log.Println(p.CommandType())
-			// log.Println(p.Arg1())
-			// log.Println(p.Arg2())
-		}
-		if err := p.Err(); err != nil {
-			log.Fatalf("error parsing: %v", err)
-		}
+		processVMFile(vmfile, cw)
 	}
 }
 
-const (
-	vmext = ".vm"
-)
+func processVMFile(vmfile string, cw *CodeWriter) error {
+	log.Println(vmfile)
+	f, err := os.Open(vmfile)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	p := NewParser(f)
+	for p.Parse() {
+		if _, ok := arithmeticCommand[p.CommandType()]; ok {
+			cmdType := CommandType(p.Arg1())
+			err := cw.WriteArithmetic(cmdType)
+			if err != nil {
+				return err
+			}
+		}
+		switch p.CommandType() {
+		case CommandTypePush, CommandTypePop:
+			segmentType := SegmentType(p.Arg1())
+			err := cw.WritePushPop(p.CommandType(), segmentType, p.Arg2())
+			if err != nil {
+				return err
+			}
+			// default:
+			// 	return fmt.Errorf("unimplemented command: %d", p.CommandType())
+		}
+		// log.Println("h")
+		// log.Println(p.CommandType())
+		// log.Println(p.Arg1())
+		// log.Println(p.Arg2())
+	}
+	if err := p.Err(); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func getVMFiles(p string) ([]string, error) {
 	file, err := os.Open(p)
