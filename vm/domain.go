@@ -67,11 +67,11 @@ var (
 		"pop":  CommandTypePop,
 	}
 	segmentBaseMap = map[SegmentType]string{
-		SegmentTypeLocal:    "LCL",
+		SegmentTypeLocal:    "LCL", // pointer to segment
 		SegmentTypeArgument: "ARG",
 		SegmentTypeThis:     "THIS",
 		SegmentTypeThat:     "THAT",
-		SegmentTypeTemp:     "R5",
-		SegmentTypePointer:  "R14",
+		SegmentTypeTemp:     "R5", // direct storage address
+		SegmentTypePointer:  "THIS",
 	}
 )
