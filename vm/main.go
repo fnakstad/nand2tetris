@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strings"
 )
 
 const (
@@ -41,6 +42,10 @@ func main() {
 
 func processVMFile(vmfile string, cw *CodeWriter) error {
 	log.Println(vmfile)
+	fid := strings.TrimSuffix(
+		path.Base(vmfile),
+		path.Ext(vmfile),
+	)
 	f, err := os.Open(vmfile)
 	if err != nil {
 		return err
@@ -59,7 +64,7 @@ func processVMFile(vmfile string, cw *CodeWriter) error {
 		switch p.CommandType() {
 		case CommandTypePush, CommandTypePop:
 			segmentType := SegmentType(p.Arg1())
-			err := cw.WritePushPop(p.CommandType(), segmentType, p.Arg2())
+			err := cw.WritePushPop(p.CommandType(), segmentType, p.Arg2(), fid)
 			if err != nil {
 				return err
 			}

@@ -7,6 +7,17 @@ import (
 )
 
 var (
+	asmPushStatic = []string{
+		"// push static",
+		"@%[1]s",
+		"D=M",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
+		"",
+	}
 	asmPushConstant = []string{
 		"// push constant",
 		"@%d",
@@ -43,6 +54,15 @@ var (
 		"M=D",
 		"@SP",
 		"M=M+1",
+	}
+	asmPopStatic = []string{
+		"// pop static",
+		"@SP",
+		"AM=M-1",
+		"D=M",
+		"@%[1]s",
+		"M=D",
+		"",
 	}
 	asmPopLATT = []string{
 		"// pop",
@@ -205,7 +225,7 @@ func (cw *CodeWriter) WriteArithmetic(cmdType CommandType) error {
 	return cw.writeCommand(asm)
 }
 
-func (cw *CodeWriter) WritePushPop(cmdType CommandType, segmentType SegmentType, index int) error {
+func (cw *CodeWriter) WritePushPop(cmdType CommandType, segmentType SegmentType, index int, fid string) error {
 	// log.Printf("%s %s %d", cmdType, segmentType, index)
 	switch cmdType {
 	case CommandTypePush:
@@ -227,6 +247,10 @@ func (cw *CodeWriter) WritePushPop(cmdType CommandType, segmentType SegmentType,
 			}
 			asm := fmt.Sprintf(strings.Join(asmPushTP, "\n"), index, segmentBase)
 			return cw.writeCommand(asm)
+		case SegmentTypeStatic:
+			varName := fmt.Sprintf("%s.%d", fid, index)
+			asm := fmt.Sprintf(strings.Join(asmPushStatic, "\n"), varName)
+			return cw.writeCommand(asm)
 		}
 	case CommandTypePop:
 		switch segmentType {
@@ -243,6 +267,10 @@ func (cw *CodeWriter) WritePushPop(cmdType CommandType, segmentType SegmentType,
 				return fmt.Errorf("can't find segment base for type %v", segmentBase)
 			}
 			asm := fmt.Sprintf(strings.Join(asmPopTP, "\n"), index, segmentBase)
+			return cw.writeCommand(asm)
+		case SegmentTypeStatic:
+			varName := fmt.Sprintf("%s.%d", fid, index)
+			asm := fmt.Sprintf(strings.Join(asmPopStatic, "\n"), varName)
 			return cw.writeCommand(asm)
 		}
 	}
