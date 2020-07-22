@@ -1,97 +1,7 @@
 package main
 
 var (
-	asmPushStatic = []string{
-		"// push static",
-		"@%[1]s",
-		"D=M",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
-		"",
-	}
-	asmPushConstant = []string{
-		"// push constant",
-		"@%d",
-		"D=A",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
-		"",
-	}
-	asmPushLATT = []string{
-		"// push",
-		"@%[2]s",
-		"D=M",
-		"@%[1]d",
-		"A=A+D",
-		"D=M",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
-	}
-	asmPushTP = []string{
-		"// push",
-		"@%[1]d",
-		"D=A",
-		"@%[2]s",
-		"A=A+D",
-		"D=M",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
-	}
-	asmPopStatic = []string{
-		"// pop static",
-		"@SP",
-		"AM=M-1",
-		"D=M",
-		"@%[1]s",
-		"M=D",
-		"",
-	}
-	asmPopLATT = []string{
-		"// pop",
-		"@%[2]s",
-		"D=M",
-		"@%[1]d",
-		"D=A+D",
-		"@R13",
-		"M=D",
-		"@SP",
-		"AM=M-1",
-		"D=M",
-		"@R13",
-		"A=M",
-		"M=D",
-		"",
-	}
-	asmPopTP = []string{
-		"// pop",
-		"@%[1]d",
-		"D=A",
-		"@%[2]s",
-		"D=A+D",
-		"@R13",
-		"M=D",
-		"@SP",
-		"AM=M-1",
-		"D=M",
-		"@R13",
-		"A=M",
-		"M=D",
-		"",
-	}
-
-	// Arithemtic
+	// Arithmetic
 	asmAdd = []string{
 		"// add",
 		"@SP",
@@ -188,6 +98,127 @@ var (
 		"@SP",
 		"A=M-1",
 		"M=!M",
+		"",
+	}
+
+	// Stack/memory access
+	asmPushStatic = []string{
+		"// push static",
+		"@%[1]s",
+		"D=M",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
+		"",
+	}
+	asmPushConstant = []string{
+		"// push constant",
+		"@%d",
+		"D=A",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
+		"",
+	}
+	asmPushLATT = []string{
+		"// push",
+		"@%[2]s",
+		"D=M",
+		"@%[1]d",
+		"A=A+D",
+		"D=M",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
+		"",
+	}
+	asmPushTP = []string{
+		"// push",
+		"@%[1]d",
+		"D=A",
+		"@%[2]s",
+		"A=A+D",
+		"D=M",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
+		"",
+	}
+	asmPopStatic = []string{
+		"// pop static",
+		"@SP",
+		"AM=M-1",
+		"D=M",
+		"@%[1]s",
+		"M=D",
+		"",
+	}
+	asmPopLATT = []string{
+		"// pop",
+		"@%[2]s",
+		"D=M",
+		"@%[1]d",
+		"D=A+D",
+		"@R13",
+		"M=D",
+		"@SP",
+		"AM=M-1",
+		"D=M",
+		"@R13",
+		"A=M",
+		"M=D",
+		"",
+	}
+	asmPopTP = []string{
+		"// pop",
+		"@%[1]d",
+		"D=A",
+		"@%[2]s",
+		"D=A+D",
+		"@R13",
+		"M=D",
+		"@SP",
+		"AM=M-1",
+		"D=M",
+		"@R13",
+		"A=M",
+		"M=D",
+		"",
+	}
+
+	// Control flow
+	asmLabel = []string{
+		"// label",
+		"(%[1]s)",
+		"",
+	}
+	asmIf = []string{
+		"// if",
+		"@SP",
+		"AM=M-1",
+		"D=M",
+		"@%[1]s",
+		"D;JGT",
+		"",
+	}
+	asmGoto = []string{
+		"// goto",
+		"@%[1]s",
+		"0;JMP",
+	}
+
+	// Functions
+	asmFunction = []string{
+		"// function",
+		"(%[1]s)",
 		"",
 	}
 )

@@ -1,5 +1,29 @@
+// push
+@ARG
+D=M
+@1
+A=A+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// pop
+@1
+D=A
+@THIS
+D=A+D
+@R13
+M=D
+@SP
+AM=M-1
+D=M
+@R13
+A=M
+M=D
 // push constant
-@10
+@0
 D=A
 @SP
 A=M
@@ -7,7 +31,7 @@ M=D
 @SP
 M=M+1
 // pop
-@LCL
+@THAT
 D=M
 @0
 D=A+D
@@ -20,15 +44,7 @@ D=M
 A=M
 M=D
 // push constant
-@21
-D=A
-@SP
-A=M
-M=D
-@SP
-M=M+1
-// push constant
-@22
+@1
 D=A
 @SP
 A=M
@@ -36,20 +52,7 @@ M=D
 @SP
 M=M+1
 // pop
-@ARG
-D=M
-@2
-D=A+D
-@R13
-M=D
-@SP
-AM=M-1
-D=M
-@R13
-A=M
-M=D
-// pop
-@ARG
+@THAT
 D=M
 @1
 D=A+D
@@ -61,92 +64,69 @@ D=M
 @R13
 A=M
 M=D
-// push constant
-@36
-D=A
-@SP
-A=M
-M=D
-@SP
-M=M+1
-// pop
-@THIS
-D=M
-@6
-D=A+D
-@R13
-M=D
-@SP
-AM=M-1
-D=M
-@R13
-A=M
-M=D
-// push constant
-@42
-D=A
-@SP
-A=M
-M=D
-@SP
-M=M+1
-// push constant
-@45
-D=A
-@SP
-A=M
-M=D
-@SP
-M=M+1
-// pop
-@THAT
-D=M
-@5
-D=A+D
-@R13
-M=D
-@SP
-AM=M-1
-D=M
-@R13
-A=M
-M=D
-// pop
-@THAT
-D=M
-@2
-D=A+D
-@R13
-M=D
-@SP
-AM=M-1
-D=M
-@R13
-A=M
-M=D
-// push constant
-@510
-D=A
-@SP
-A=M
-M=D
-@SP
-M=M+1
-// pop
-@6
-D=A
-@R5
-D=A+D
-@R13
-M=D
-@SP
-AM=M-1
-D=M
-@R13
-A=M
-M=D
 // push
-@LCL
+@ARG
+D=M
+@0
+A=A+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// push constant
+@2
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// sub
+@SP
+AM=M-1
+D=M
+A=A-1
+M=M-D
+// pop
+@ARG
+D=M
+@0
+D=A+D
+@R13
+M=D
+@SP
+AM=M-1
+D=M
+@R13
+A=M
+M=D
+// label
+(MAIN_LOOP_START)
+// push
+@ARG
+D=M
+@0
+A=A+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// if
+@SP
+AM=M-1
+D=M
+@COMPUTE_ELEMENT
+D;JGT
+// goto
+@END_PROGRAM
+0;JMP// label
+(COMPUTE_ELEMENT)
+// push
+@THAT
 D=M
 @0
 A=A+D
@@ -159,23 +139,6 @@ M=M+1
 // push
 @THAT
 D=M
-@5
-A=A+D
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1
-// add
-@SP
-AM=M-1
-D=M
-A=A-1
-M=D+M
-// push
-@ARG
-D=M
 @1
 A=A+D
 D=M
@@ -184,52 +147,39 @@ A=M
 M=D
 @SP
 M=M+1
-// sub
-@SP
-AM=M-1
-D=M
-A=A-1
-M=M-D
-// push
-@THIS
-D=M
-@6
-A=A+D
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1
-// push
-@THIS
-D=M
-@6
-A=A+D
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1
 // add
 @SP
 AM=M-1
 D=M
 A=A-1
 M=D+M
-// sub
+// pop
+@THAT
+D=M
+@2
+D=A+D
+@R13
+M=D
 @SP
 AM=M-1
 D=M
-A=A-1
-M=M-D
+@R13
+A=M
+M=D
 // push
-@6
+@1
 D=A
-@R5
+@THIS
 A=A+D
 D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// push constant
+@1
+D=A
 @SP
 A=M
 M=D
@@ -241,3 +191,58 @@ AM=M-1
 D=M
 A=A-1
 M=D+M
+// pop
+@1
+D=A
+@THIS
+D=A+D
+@R13
+M=D
+@SP
+AM=M-1
+D=M
+@R13
+A=M
+M=D
+// push
+@ARG
+D=M
+@0
+A=A+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// push constant
+@1
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// sub
+@SP
+AM=M-1
+D=M
+A=A-1
+M=M-D
+// pop
+@ARG
+D=M
+@0
+D=A+D
+@R13
+M=D
+@SP
+AM=M-1
+D=M
+@R13
+A=M
+M=D
+// goto
+@MAIN_LOOP_START
+0;JMP// label
+(END_PROGRAM)

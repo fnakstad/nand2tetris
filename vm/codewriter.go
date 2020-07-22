@@ -6,6 +6,11 @@ import (
 	"strings"
 )
 
+// TODO: namespace user provided labels to prevent collisions
+// const (
+// 	userLabelPrefix = "USR_"
+// )
+
 var (
 	asmPushPopMap = map[CommandType]map[SegmentType][]string{
 		CommandTypePush: map[SegmentType][]string{
@@ -92,6 +97,29 @@ func (cw *CodeWriter) WritePushPop(cmdType CommandType, segmentType SegmentType,
 		asm = fmt.Sprintf(strings.Join(asmStrings, "\n"), index, segmentBase)
 	}
 
+	return cw.writeCommand(asm)
+}
+
+func (cw *CodeWriter) WriteLabel(label string) error {
+	// TODO: Scope to function
+	asm := fmt.Sprintf(strings.Join(asmLabel, "\n"), label)
+	return cw.writeCommand(asm)
+}
+
+func (cw *CodeWriter) WriteIf(label string) error {
+	// TODO: Scope to function
+	asm := fmt.Sprintf(strings.Join(asmIf, "\n"), label)
+	return cw.writeCommand(asm)
+}
+
+func (cw *CodeWriter) WriteGoto(label string) error {
+	// TODO: Scope to function
+	asm := fmt.Sprintf(strings.Join(asmGoto, "\n"), label)
+	return cw.writeCommand(asm)
+}
+
+func (cw *CodeWriter) WriteFunction(funcName string, numLocals int) error {
+	asm := fmt.Sprintf(strings.Join(asmFunction, "\n"), funcName)
 	return cw.writeCommand(asm)
 }
 
