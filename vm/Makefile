@@ -11,6 +11,7 @@ translate:
 	${GO_RUN} ${PROJECTS_DIR}/07/MemoryAccess/StaticTest/StaticTest.vm ${PROJECTS_DIR}/07/MemoryAccess/StaticTest/StaticTest.asm
 	${GO_RUN} ${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.vm ${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.asm
 	${GO_RUN} ${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.vm ${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.asm
+	${GO_RUN} ${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.vm ${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.asm
 
 .PHONY: test
 test:
@@ -21,3 +22,4 @@ test:
 	${CPU_EMU} ${PROJECTS_DIR}/07/MemoryAccess/StaticTest/StaticTest.tst
 	${CPU_EMU} ${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.tst
 	${CPU_EMU} ${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.tst
+	${CPU_EMU} ${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.tst

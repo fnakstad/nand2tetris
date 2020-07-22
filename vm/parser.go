@@ -79,9 +79,11 @@ func (p *Parser) Parse() bool {
 		p.arg1 = tokens[0]
 	}
 	switch cmdType {
+	case CommandTypeReturn:
+		// No args...
 	case CommandTypeLabel, CommandTypeIf, CommandTypeGoto: // just needs arg1
 		p.arg1 = tokens[1]
-	case CommandTypePush, CommandTypePop, CommandTypeFunction: // uses both args
+	case CommandTypePush, CommandTypePop, CommandTypeFunction, CommandTypeCall: // uses both args
 		if len(tokens) < 3 {
 			p.err = fmt.Errorf("not enough args: %s", text)
 			return false

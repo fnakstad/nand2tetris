@@ -219,6 +219,22 @@ var (
 	asmFunction = []string{
 		"// function",
 		"(%[1]s)",
+		"%[2]s",
+	}
+	asmReturn = []string{
+		"// return",
+		"",
+		"",
+	}
+	asmCall = []string{
+		"// call",
+		"@%[1]s", // push return address
+		"D=A",
+		"@SP",
+		"A=M",
+		"M=D",
+		"@SP",
+		"M=M+1",
 		"",
 	}
 )

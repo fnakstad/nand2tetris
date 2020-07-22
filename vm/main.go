@@ -88,6 +88,16 @@ func processVMFile(vmfile string, cw *CodeWriter) error {
 			if err != nil {
 				return err
 			}
+		case CommandTypeReturn:
+			err := cw.WriteReturn()
+			if err != nil {
+				return err
+			}
+		case CommandTypeCall:
+			err := cw.WriteCall(p.Arg1(), p.Arg2())
+			if err != nil {
+				return err
+			}
 			// default:
 			// 	return fmt.Errorf("unimplemented command: %d", p.CommandType())
 		}

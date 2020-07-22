@@ -119,7 +119,22 @@ func (cw *CodeWriter) WriteGoto(label string) error {
 }
 
 func (cw *CodeWriter) WriteFunction(funcName string, numLocals int) error {
-	asm := fmt.Sprintf(strings.Join(asmFunction, "\n"), funcName)
+	lclinit := make([]string, numLocals)
+	for i := 0; i < numLocals; i++ {
+		lclinit[i] = fmt.Sprintf(strings.Join(asmPushLATT, "\n"), i, "LCL")
+	}
+
+	asm := fmt.Sprintf(strings.Join(asmFunction, "\n"), funcName, strings.Join(lclinit, ""))
+	return cw.writeCommand(asm)
+}
+
+func (cw *CodeWriter) WriteReturn() error {
+	asm := strings.Join(asmReturn, "\n")
+	return cw.writeCommand(asm)
+}
+
+func (cw *CodeWriter) WriteCall(funcName string, numArgs int) error {
+	asm := fmt.Sprintf(strings.Join(asmCall, "\n"), funcName)
 	return cw.writeCommand(asm)
 }
 
