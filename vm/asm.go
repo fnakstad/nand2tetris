@@ -1,5 +1,7 @@
 package main
 
+import "strings"
+
 var (
 	// Arithmetic
 	asmAdd = []string{
@@ -102,10 +104,7 @@ var (
 	}
 
 	// Stack/memory access
-	asmPushStatic = []string{
-		"// push static",
-		"@%[1]s",
-		"D=M",
+	asmPushDToStack = []string{
 		"@SP",
 		"A=M",
 		"M=D",
@@ -113,16 +112,17 @@ var (
 		"M=M+1",
 		"",
 	}
+	asmPushStatic = []string{
+		"// push static",
+		"@%[1]s",
+		"D=M",
+		strings.Join(asmPushDToStack, "\n"),
+	}
 	asmPushConstant = []string{
 		"// push constant",
 		"@%d",
 		"D=A",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
-		"",
+		strings.Join(asmPushDToStack, "\n"),
 	}
 	asmPushLATT = []string{
 		"// push",
@@ -131,12 +131,7 @@ var (
 		"@%[1]d",
 		"A=A+D",
 		"D=M",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
-		"",
+		strings.Join(asmPushDToStack, "\n"),
 	}
 	asmPushTP = []string{
 		"// push",
@@ -145,12 +140,7 @@ var (
 		"@%[2]s",
 		"A=A+D",
 		"D=M",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
-		"",
+		strings.Join(asmPushDToStack, "\n"),
 	}
 	asmPopStatic = []string{
 		"// pop static",
@@ -230,11 +220,7 @@ var (
 		"// call",
 		"@%[1]s", // push return address
 		"D=A",
-		"@SP",
-		"A=M",
-		"M=D",
-		"@SP",
-		"M=M+1",
+		strings.Join(asmPushDToStack, "\n"),
 		"",
 	}
 )
