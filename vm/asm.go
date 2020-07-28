@@ -3,6 +3,15 @@ package main
 import "strings"
 
 var (
+	asmBootstrap = []string{
+		"// bootstrap",
+		"@256", // SP = 256
+		"D=A",
+		"@SP",
+		"M=D",
+		"",
+	}
+
 	// Arithmetic
 	asmAdd = []string{
 		"// add",
@@ -275,7 +284,7 @@ var (
 		strings.Join(asmPushDToStack, "\n"),
 		"@SP", // reposition ARG (SP-n-5)
 		"D=M",
-		"@%[3]",
+		"@%[3]d",
 		"D=D-A",
 		"@5",
 		"D=D-A",
@@ -287,7 +296,7 @@ var (
 		"M=D",
 		"@%[2]s", // jump to function
 		"0;JMP",
-		"(@%[1]s)", // label for return address
+		"(%[1]s)", // label for return address
 		"",
 	}
 )
