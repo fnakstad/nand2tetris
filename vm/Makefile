@@ -17,6 +17,7 @@ translate:
 	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.vm -out=${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.asm -bootstrap=false
 	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/NestedCall -out=${PROJECTS_DIR}/08/FunctionCalls/NestedCall/NestedCall.asm
 	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement -out=${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement/FibonacciElement.asm
+	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/StaticsTest -out=${PROJECTS_DIR}/08/FunctionCalls/StaticsTest/StaticsTest.asm
 
 .PHONY: test
 test:
@@ -30,3 +31,4 @@ test:
 	${CPU_EMU} ${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.tst
 	${CPU_EMU} ${PROJECTS_DIR}/08/FunctionCalls/NestedCall/NestedCall.tst
 	${CPU_EMU} ${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement/FibonacciElement.tst
+	${CPU_EMU} ${PROJECTS_DIR}/08/FunctionCalls/StaticsTest/StaticsTest.tst
