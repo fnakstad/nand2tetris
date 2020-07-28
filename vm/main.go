@@ -77,6 +77,8 @@ func processVMFile(vmfile string, cw *CodeWriter) error {
 	p := NewParser(f)
 	currentFunc := globalFuncName // tracks which function is currently being processed
 	for p.Parse() {
+		cw.WriteComment(p.Input())
+
 		if _, ok := arithmeticCommand[p.CommandType()]; ok {
 			cmdType := CommandType(p.Arg1())
 			err := cw.WriteArithmetic(cmdType)

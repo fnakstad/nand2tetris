@@ -149,11 +149,16 @@ func (cw *CodeWriter) WriteCall(funcName string, numArgs int) error {
 	return cw.writeCommand(asm)
 }
 
+func (cw *CodeWriter) WriteComment(comment string) error {
+	_, err := io.WriteString(cw.w, fmt.Sprintf("// %s\n", comment))
+	return err
+}
+
 func getNamespacedLabel(funcName, label string) string {
 	return fmt.Sprintf("%s$%s", funcName, label)
 }
 
 func (cw *CodeWriter) writeCommand(cmd string) error {
-	_, err := io.WriteString(cw.w, fmt.Sprintf("%s%s", cmd, "\n"))
+	_, err := io.WriteString(cw.w, fmt.Sprintf("%s%s", cmd, "\n\n"))
 	return err
 }

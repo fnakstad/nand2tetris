@@ -15,6 +15,7 @@ const (
 type Parser struct {
 	scanner *bufio.Scanner
 	err     error
+	input   string
 	cmdType CommandType
 	arg1    string
 	arg2    int
@@ -30,6 +31,10 @@ func (p *Parser) Err() error {
 	return p.err
 }
 
+func (p *Parser) Input() string {
+	return p.input
+}
+
 func (p *Parser) CommandType() CommandType {
 	return p.cmdType
 }
@@ -43,6 +48,7 @@ func (p *Parser) Arg2() int {
 }
 
 func (p *Parser) resetProps() {
+	p.input = ""
 	p.cmdType = CommandTypeUnknown
 	p.arg1 = ""
 	p.arg2 = 0
@@ -61,6 +67,8 @@ func (p *Parser) Parse() bool {
 		text = p.scanner.Text()
 		text = stripCommentsAndWhitespace(text)
 	}
+
+	p.input = text
 
 	tokens := strings.Split(text, " ")
 	if len(tokens) <= 0 {
