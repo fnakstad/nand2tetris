@@ -213,7 +213,47 @@ var (
 	}
 	asmReturn = []string{
 		"// return",
-		"",
+		"@LCL", // current frame
+		"D=M",
+		"@R13",
+		"M=D",
+		"@5", // return value
+		"A=D-A",
+		"D=M",
+		"@R14",
+		"M=D",
+		"@SP", // reposition return value
+		"A=M-1",
+		"D=M",
+		"@ARG",
+		"A=M",
+		"M=D",
+		"D=A+1", // reposition SP
+		"@SP",
+		"M=D",
+		"@R13", // reposition THAT
+		"AM=M-1",
+		"D=M",
+		"@THAT",
+		"M=D",
+		"@R13", // reposition THIS
+		"AM=M-1",
+		"D=M",
+		"@THIS",
+		"M=D",
+		"@R13", // reposition ARG
+		"AM=M-1",
+		"D=M",
+		"@ARG",
+		"M=D",
+		"@R13", // reposition LCL
+		"AM=M-1",
+		"D=M",
+		"@LCL",
+		"M=D",
+		"@R14", // go to return address
+		"A=M",
+		"0;JMP",
 		"",
 	}
 	asmCall = []string{
@@ -221,6 +261,33 @@ var (
 		"@%[1]s", // push return address
 		"D=A",
 		strings.Join(asmPushDToStack, "\n"),
+		"@LCL", // push LCL
+		"D=A",
+		strings.Join(asmPushDToStack, "\n"),
+		"@ARG", // push ARG
+		"D=A",
+		strings.Join(asmPushDToStack, "\n"),
+		"@THIS", // push THIS
+		"D=A",
+		strings.Join(asmPushDToStack, "\n"),
+		"@THAT", // push THAT
+		"D=A",
+		strings.Join(asmPushDToStack, "\n"),
+		"@SP", // reposition ARG (SP-n-5)
+		"D=M",
+		"@%[3]",
+		"D=D-A",
+		"@5",
+		"D=D-A",
+		"@ARG",
+		"M=D",
+		"@SP", // reposition LCL
+		"D=M",
+		"@LCL",
+		"M=D",
+		"@%[2]s", // jump to function
+		"0;JMP",
+		"(@%[1]s)", // label for return address
 		"",
 	}
 )

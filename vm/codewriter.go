@@ -134,7 +134,8 @@ func (cw *CodeWriter) WriteReturn() error {
 }
 
 func (cw *CodeWriter) WriteCall(funcName string, numArgs int) error {
-	asm := fmt.Sprintf(strings.Join(asmCall, "\n"), funcName)
+	returnAddress := fmt.Sprintf("return_%s", funcName) // TODO: fix this
+	asm := fmt.Sprintf(strings.Join(asmCall, "\n"), returnAddress, funcName, numArgs)
 	return cw.writeCommand(asm)
 }
 

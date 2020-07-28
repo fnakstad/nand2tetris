@@ -2,6 +2,9 @@ CPU_EMU=../tools/CPUEmulator.sh
 GO_RUN=go run .
 PROJECTS_DIR=../projects
 
+.PHONY: all
+all: translate test
+
 .PHONY: translate
 translate:
 	${GO_RUN} ${PROJECTS_DIR}/07/StackArithmetic/SimpleAdd/SimpleAdd.vm ${PROJECTS_DIR}/07/StackArithmetic/SimpleAdd/SimpleAdd.asm
