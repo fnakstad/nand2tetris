@@ -4,7 +4,6 @@ import "strings"
 
 var (
 	asmBootstrap = []string{
-		"// bootstrap",
 		"@256", // SP = 256
 		"D=A",
 		"@SP",
@@ -14,7 +13,6 @@ var (
 
 	// Arithmetic
 	asmAdd = []string{
-		"// add",
 		"@SP",
 		"AM=M-1",
 		"D=M",
@@ -23,7 +21,6 @@ var (
 		"",
 	}
 	asmSub = []string{
-		"// sub",
 		"@SP",
 		"AM=M-1",
 		"D=M",
@@ -32,14 +29,12 @@ var (
 		"",
 	}
 	asmNeg = []string{
-		"// neg",
 		"@SP",
 		"A=M-1",
 		"M=-M",
 		"",
 	}
 	asmEq = []string{
-		"// eq",
 		"@SP",
 		"AM=M-1",
 		"D=M",
@@ -55,7 +50,6 @@ var (
 		"",
 	}
 	asmGt = []string{
-		"// gt",
 		"@SP",
 		"AM=M-1",
 		"D=M",
@@ -71,7 +65,6 @@ var (
 		"",
 	}
 	asmLt = []string{
-		"// lt",
 		"@SP",
 		"AM=M-1",
 		"D=M",
@@ -87,7 +80,6 @@ var (
 		"",
 	}
 	asmAnd = []string{
-		"// and",
 		"@SP",
 		"AM=M-1",
 		"D=M",
@@ -96,7 +88,6 @@ var (
 		"",
 	}
 	asmOr = []string{
-		"// or",
 		"@SP",
 		"AM=M-1",
 		"D=M",
@@ -105,7 +96,6 @@ var (
 		"",
 	}
 	asmNot = []string{
-		"// not",
 		"@SP",
 		"A=M-1",
 		"M=!M",
@@ -122,19 +112,16 @@ var (
 		"",
 	}
 	asmPushStatic = []string{
-		"// push static",
 		"@%[1]s",
 		"D=M",
 		strings.Join(asmPushDToStack, "\n"),
 	}
 	asmPushConstant = []string{
-		"// push constant",
 		"@%d",
 		"D=A",
 		strings.Join(asmPushDToStack, "\n"),
 	}
 	asmPushLATT = []string{
-		"// push",
 		"@%[2]s",
 		"D=M",
 		"@%[1]d",
@@ -143,7 +130,6 @@ var (
 		strings.Join(asmPushDToStack, "\n"),
 	}
 	asmPushTP = []string{
-		"// push",
 		"@%[1]d",
 		"D=A",
 		"@%[2]s",
@@ -152,7 +138,6 @@ var (
 		strings.Join(asmPushDToStack, "\n"),
 	}
 	asmPopStatic = []string{
-		"// pop static",
 		"@SP",
 		"AM=M-1",
 		"D=M",
@@ -161,7 +146,6 @@ var (
 		"",
 	}
 	asmPopLATT = []string{
-		"// pop",
 		"@%[2]s",
 		"D=M",
 		"@%[1]d",
@@ -177,7 +161,6 @@ var (
 		"",
 	}
 	asmPopTP = []string{
-		"// pop",
 		"@%[1]d",
 		"D=A",
 		"@%[2]s",
@@ -195,33 +178,30 @@ var (
 
 	// Control flow
 	asmLabel = []string{
-		"// label",
 		"(%[1]s)",
 		"",
 	}
 	asmIf = []string{
-		"// if",
 		"@SP",
 		"AM=M-1",
 		"D=M",
 		"@%[1]s",
-		"D;JGT",
+		"D;JNE",
 		"",
 	}
 	asmGoto = []string{
-		"// goto",
 		"@%[1]s",
 		"0;JMP",
+		"",
 	}
 
 	// Functions
 	asmFunction = []string{
-		"// function",
 		"(%[1]s)",
 		"%[2]s",
+		"",
 	}
 	asmReturn = []string{
-		"// return",
 		"@LCL", // current frame
 		"D=M",
 		"@R13",
@@ -266,21 +246,20 @@ var (
 		"",
 	}
 	asmCall = []string{
-		"// call",
 		"@%[1]s", // push return address
 		"D=A",
 		strings.Join(asmPushDToStack, "\n"),
 		"@LCL", // push LCL
-		"D=A",
+		"D=M",
 		strings.Join(asmPushDToStack, "\n"),
 		"@ARG", // push ARG
-		"D=A",
+		"D=M",
 		strings.Join(asmPushDToStack, "\n"),
 		"@THIS", // push THIS
-		"D=A",
+		"D=M",
 		strings.Join(asmPushDToStack, "\n"),
 		"@THAT", // push THAT
-		"D=A",
+		"D=M",
 		strings.Join(asmPushDToStack, "\n"),
 		"@SP", // reposition ARG (SP-n-5)
 		"D=M",

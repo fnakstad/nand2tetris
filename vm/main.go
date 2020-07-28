@@ -34,6 +34,12 @@ func main() {
 	defer outf.Close()
 
 	cw := NewCodeWriter(outf)
+	err = cw.WriteBootstrap()
+	err = cw.WriteCall("Sys.init", 0)
+	if err != nil {
+		log.Fatalf("error writing bootstrap: %v", err)
+	}
+
 	for _, vmfile := range vmfiles {
 		if err := processVMFile(vmfile, cw); err != nil {
 			log.Fatalf("error processing vm file: %v", err)
@@ -96,8 +102,6 @@ func processVMFile(vmfile string, cw *CodeWriter) error {
 			if err != nil {
 				return err
 			}
-			// nested function declarations not allowed, so jut revert to global
-			currentFunc = globalFuncName
 		case CommandTypeCall:
 			err := cw.WriteCall(p.Arg1(), p.Arg2())
 			if err != nil {

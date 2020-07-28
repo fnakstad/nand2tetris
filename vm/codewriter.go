@@ -44,6 +44,8 @@ var (
 		CommandTypeOr:  asmOr,
 		CommandTypeNot: asmNot,
 	}
+
+	callNumMap = map[string]int{}
 )
 
 type CodeWriter struct {
@@ -56,6 +58,11 @@ func NewCodeWriter(w io.Writer) *CodeWriter {
 		w:  w,
 		lc: make(map[CommandType]uint8),
 	}
+}
+
+func (cw *CodeWriter) WriteBootstrap() error {
+	asm := strings.Join(asmBootstrap, "\n")
+	return cw.writeCommand(asm)
 }
 
 func (cw *CodeWriter) WriteArithmetic(cmdType CommandType) error {
@@ -134,7 +141,10 @@ func (cw *CodeWriter) WriteReturn() error {
 }
 
 func (cw *CodeWriter) WriteCall(funcName string, numArgs int) error {
-	returnAddress := fmt.Sprintf("return_%s", funcName) // TODO: fix this
+	// Get callNum from map
+	callNum := callNumMap[funcName]
+	callNumMap[funcName]++
+	returnAddress := fmt.Sprintf("return_%s_%d", funcName, callNum)
 	asm := fmt.Sprintf(strings.Join(asmCall, "\n"), returnAddress, funcName, numArgs)
 	return cw.writeCommand(asm)
 }
