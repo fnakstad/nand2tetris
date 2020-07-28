@@ -8,7 +8,6 @@ var (
 		"D=A",
 		"@SP",
 		"M=D",
-		"",
 	}
 
 	// Arithmetic
@@ -18,7 +17,6 @@ var (
 		"D=M",
 		"A=A-1",
 		"M=D+M",
-		"",
 	}
 	asmSub = []string{
 		"@SP",
@@ -26,13 +24,11 @@ var (
 		"D=M",
 		"A=A-1",
 		"M=M-D",
-		"",
 	}
 	asmNeg = []string{
 		"@SP",
 		"A=M-1",
 		"M=-M",
-		"",
 	}
 	asmEq = []string{
 		"@SP",
@@ -47,7 +43,6 @@ var (
 		"A=M-1",
 		"M=0",
 		"(EQ_%[1]d)",
-		"",
 	}
 	asmGt = []string{
 		"@SP",
@@ -62,7 +57,6 @@ var (
 		"A=M-1",
 		"M=0",
 		"(GT_%[1]d)",
-		"",
 	}
 	asmLt = []string{
 		"@SP",
@@ -77,7 +71,6 @@ var (
 		"A=M-1",
 		"M=0",
 		"(LT_%[1]d)",
-		"",
 	}
 	asmAnd = []string{
 		"@SP",
@@ -85,7 +78,6 @@ var (
 		"D=M",
 		"A=A-1",
 		"M=D&M",
-		"",
 	}
 	asmOr = []string{
 		"@SP",
@@ -93,13 +85,11 @@ var (
 		"D=M",
 		"A=A-1",
 		"M=D|M",
-		"",
 	}
 	asmNot = []string{
 		"@SP",
 		"A=M-1",
 		"M=!M",
-		"",
 	}
 
 	// Stack/memory access
@@ -109,7 +99,6 @@ var (
 		"M=D",
 		"@SP",
 		"M=M+1",
-		"",
 	}
 	asmPushStatic = []string{
 		"@%[1]s",
@@ -143,7 +132,6 @@ var (
 		"D=M",
 		"@%[1]s",
 		"M=D",
-		"",
 	}
 	asmPopLATT = []string{
 		"@%[2]s",
@@ -158,7 +146,6 @@ var (
 		"@R13",
 		"A=M",
 		"M=D",
-		"",
 	}
 	asmPopTP = []string{
 		"@%[1]d",
@@ -173,13 +160,11 @@ var (
 		"@R13",
 		"A=M",
 		"M=D",
-		"",
 	}
 
 	// Control flow
 	asmLabel = []string{
 		"(%[1]s)",
-		"",
 	}
 	asmIf = []string{
 		"@SP",
@@ -187,19 +172,16 @@ var (
 		"D=M",
 		"@%[1]s",
 		"D;JNE",
-		"",
 	}
 	asmGoto = []string{
 		"@%[1]s",
 		"0;JMP",
-		"",
 	}
 
 	// Functions
 	asmFunction = []string{
 		"(%[1]s)",
 		"%[2]s",
-		"",
 	}
 	asmReturn = []string{
 		"@LCL", // current frame
@@ -243,7 +225,6 @@ var (
 		"@R14", // go to return address
 		"A=M",
 		"0;JMP",
-		"",
 	}
 	asmCall = []string{
 		"@%[1]s", // push return address
@@ -276,6 +257,5 @@ var (
 		"@%[2]s", // jump to function
 		"0;JMP",
 		"(%[1]s)", // label for return address
-		"",
 	}
 )

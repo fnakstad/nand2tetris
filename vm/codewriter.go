@@ -131,7 +131,7 @@ func (cw *CodeWriter) WriteFunction(funcName string, numLocals int) error {
 		lclinit[i] = fmt.Sprintf(strings.Join(asmPushLATT, "\n"), i, "LCL")
 	}
 
-	asm := fmt.Sprintf(strings.Join(asmFunction, "\n"), funcName, strings.Join(lclinit, ""))
+	asm := fmt.Sprintf(strings.Join(asmFunction, "\n"), funcName, strings.Join(lclinit, "\n"))
 	return cw.writeCommand(asm)
 }
 
@@ -154,6 +154,6 @@ func getNamespacedLabel(funcName, label string) string {
 }
 
 func (cw *CodeWriter) writeCommand(cmd string) error {
-	_, err := io.WriteString(cw.w, cmd)
+	_, err := io.WriteString(cw.w, fmt.Sprintf("%s%s", cmd, "\n"))
 	return err
 }
