@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -13,12 +14,23 @@ const (
 	globalFuncName = "global"
 )
 
+var (
+	inFlag        = flag.String("in", "", "vm file or directory to process")
+	outFlag       = flag.String("out", "", "file to save the resulting .asm file")
+	bootstrapFlag = flag.Bool("bootstrap", true, "whether to add bootstrap asm")
+)
+
 func main() {
-	if len(os.Args) < 3 {
-		log.Fatalf("not enough arguments")
+	flag.Parse()
+
+	if *inFlag == "" {
+		log.Fatalf("-in flag is required")
+	}
+	if *outFlag == "" {
+		log.Fatalf("-out flag is required")
 	}
 
-	vmfiles, err := getVMFiles(os.Args[1])
+	vmfiles, err := getVMFiles(*inFlag)
 	if err != nil {
 		log.Fatalf("error getting VM files: %v", err)
 	}
@@ -27,17 +39,20 @@ func main() {
 		log.Fatal("no vm files to handle")
 	}
 
-	outf, err := os.Create(os.Args[2])
+	outf, err := os.Create(*outFlag)
 	if err != nil {
 		log.Fatalf("error creating out file: %v", err)
 	}
 	defer outf.Close()
 
 	cw := NewCodeWriter(outf)
-	err = cw.WriteBootstrap()
-	err = cw.WriteCall("Sys.init", 0)
-	if err != nil {
-		log.Fatalf("error writing bootstrap: %v", err)
+
+	if *bootstrapFlag {
+		err = cw.WriteBootstrap()
+		err = cw.WriteCall("Sys.init", 0)
+		if err != nil {
+			log.Fatalf("error writing bootstrap: %v", err)
+		}
 	}
 
 	for _, vmfile := range vmfiles {

@@ -7,15 +7,15 @@ all: translate test
 
 .PHONY: translate
 translate:
-	${GO_RUN} ${PROJECTS_DIR}/07/StackArithmetic/SimpleAdd/SimpleAdd.vm ${PROJECTS_DIR}/07/StackArithmetic/SimpleAdd/SimpleAdd.asm
-	${GO_RUN} ${PROJECTS_DIR}/07/StackArithmetic/StackTest/StackTest.vm ${PROJECTS_DIR}/07/StackArithmetic/StackTest/StackTest.asm
-	${GO_RUN} ${PROJECTS_DIR}/07/MemoryAccess/BasicTest/BasicTest.vm ${PROJECTS_DIR}/07/MemoryAccess/BasicTest/BasicTest.asm
-	${GO_RUN} ${PROJECTS_DIR}/07/MemoryAccess/PointerTest/PointerTest.vm ${PROJECTS_DIR}/07/MemoryAccess/PointerTest/PointerTest.asm
-	${GO_RUN} ${PROJECTS_DIR}/07/MemoryAccess/StaticTest/StaticTest.vm ${PROJECTS_DIR}/07/MemoryAccess/StaticTest/StaticTest.asm
-	${GO_RUN} ${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.vm ${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.asm
-	${GO_RUN} ${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.vm ${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.asm
-	${GO_RUN} ${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.vm ${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.asm
-	${GO_RUN} ${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement ${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement/FibonacciElement.asm
+	${GO_RUN} -in=${PROJECTS_DIR}/07/StackArithmetic/SimpleAdd/SimpleAdd.vm -out=${PROJECTS_DIR}/07/StackArithmetic/SimpleAdd/SimpleAdd.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/07/StackArithmetic/StackTest/StackTest.vm -out=${PROJECTS_DIR}/07/StackArithmetic/StackTest/StackTest.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/07/MemoryAccess/BasicTest/BasicTest.vm -out=${PROJECTS_DIR}/07/MemoryAccess/BasicTest/BasicTest.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/07/MemoryAccess/PointerTest/PointerTest.vm -out=${PROJECTS_DIR}/07/MemoryAccess/PointerTest/PointerTest.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/07/MemoryAccess/StaticTest/StaticTest.vm -out=${PROJECTS_DIR}/07/MemoryAccess/StaticTest/StaticTest.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.vm -out=${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.vm -out=${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.vm -out=${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement -out=${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement/FibonacciElement.asm
 
 .PHONY: test
 test:

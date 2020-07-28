@@ -1,4 +1,3 @@
-// push
 @ARG
 D=M
 @1
@@ -9,7 +8,6 @@ A=M
 M=D
 @SP
 M=M+1
-// pop
 @1
 D=A
 @THIS
@@ -22,7 +20,6 @@ D=M
 @R13
 A=M
 M=D
-// push constant
 @0
 D=A
 @SP
@@ -30,7 +27,6 @@ A=M
 M=D
 @SP
 M=M+1
-// pop
 @THAT
 D=M
 @0
@@ -43,7 +39,6 @@ D=M
 @R13
 A=M
 M=D
-// push constant
 @1
 D=A
 @SP
@@ -51,7 +46,6 @@ A=M
 M=D
 @SP
 M=M+1
-// pop
 @THAT
 D=M
 @1
@@ -64,7 +58,6 @@ D=M
 @R13
 A=M
 M=D
-// push
 @ARG
 D=M
 @0
@@ -75,7 +68,6 @@ A=M
 M=D
 @SP
 M=M+1
-// push constant
 @2
 D=A
 @SP
@@ -83,13 +75,11 @@ A=M
 M=D
 @SP
 M=M+1
-// sub
 @SP
 AM=M-1
 D=M
 A=A-1
 M=M-D
-// pop
 @ARG
 D=M
 @0
@@ -102,9 +92,7 @@ D=M
 @R13
 A=M
 M=D
-// label
 (global$MAIN_LOOP_START)
-// push
 @ARG
 D=M
 @0
@@ -115,17 +103,14 @@ A=M
 M=D
 @SP
 M=M+1
-// if
 @SP
 AM=M-1
 D=M
 @global$COMPUTE_ELEMENT
-D;JGT
-// goto
+D;JNE
 @global$END_PROGRAM
-0;JMP// label
+0;JMP
 (global$COMPUTE_ELEMENT)
-// push
 @THAT
 D=M
 @0
@@ -136,7 +121,6 @@ A=M
 M=D
 @SP
 M=M+1
-// push
 @THAT
 D=M
 @1
@@ -147,13 +131,11 @@ A=M
 M=D
 @SP
 M=M+1
-// add
 @SP
 AM=M-1
 D=M
 A=A-1
 M=D+M
-// pop
 @THAT
 D=M
 @2
@@ -166,7 +148,6 @@ D=M
 @R13
 A=M
 M=D
-// push
 @1
 D=A
 @THIS
@@ -177,7 +158,6 @@ A=M
 M=D
 @SP
 M=M+1
-// push constant
 @1
 D=A
 @SP
@@ -185,13 +165,11 @@ A=M
 M=D
 @SP
 M=M+1
-// add
 @SP
 AM=M-1
 D=M
 A=A-1
 M=D+M
-// pop
 @1
 D=A
 @THIS
@@ -204,7 +182,6 @@ D=M
 @R13
 A=M
 M=D
-// push
 @ARG
 D=M
 @0
@@ -215,7 +192,6 @@ A=M
 M=D
 @SP
 M=M+1
-// push constant
 @1
 D=A
 @SP
@@ -223,13 +199,11 @@ A=M
 M=D
 @SP
 M=M+1
-// sub
 @SP
 AM=M-1
 D=M
 A=A-1
 M=M-D
-// pop
 @ARG
 D=M
 @0
@@ -242,7 +216,6 @@ D=M
 @R13
 A=M
 M=D
-// goto
 @global$MAIN_LOOP_START
-0;JMP// label
+0;JMP
 (global$END_PROGRAM)
