@@ -181,7 +181,9 @@ var (
 	// Functions
 	asmFunction = []string{
 		"(%[1]s)",
-		"%[2]s",
+		"@0",
+		"D=A",
+		"%[2]s", // repeat `asmPushDToStack` n times
 	}
 	asmReturn = []string{
 		"@LCL", // current frame

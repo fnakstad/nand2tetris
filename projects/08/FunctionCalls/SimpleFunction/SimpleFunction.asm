@@ -1,20 +1,12 @@
 // function SimpleFunction.test 2
 (SimpleFunction.test)
-@LCL
-D=M
 @0
-A=A+D
-D=M
+D=A
 @SP
 A=M
 M=D
 @SP
 M=M+1
-@LCL
-D=M
-@1
-A=A+D
-D=M
 @SP
 A=M
 M=D

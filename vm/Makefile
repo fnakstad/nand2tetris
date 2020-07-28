@@ -15,6 +15,7 @@ translate:
 	${GO_RUN} -in=${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.vm -out=${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.asm -bootstrap=false
 	${GO_RUN} -in=${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.vm -out=${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.asm -bootstrap=false
 	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.vm -out=${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.asm -bootstrap=false
+	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/NestedCall -out=${PROJECTS_DIR}/08/FunctionCalls/NestedCall/NestedCall.asm
 	${GO_RUN} -in=${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement -out=${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement/FibonacciElement.asm
 
 .PHONY: test
@@ -27,4 +28,5 @@ test:
 	${CPU_EMU} ${PROJECTS_DIR}/08/ProgramFlow/BasicLoop/BasicLoop.tst
 	${CPU_EMU} ${PROJECTS_DIR}/08/ProgramFlow/FibonacciSeries/FibonacciSeries.tst
 	${CPU_EMU} ${PROJECTS_DIR}/08/FunctionCalls/SimpleFunction/SimpleFunction.tst
+	${CPU_EMU} ${PROJECTS_DIR}/08/FunctionCalls/NestedCall/NestedCall.tst
 	${CPU_EMU} ${PROJECTS_DIR}/08/FunctionCalls/FibonacciElement/FibonacciElement.tst

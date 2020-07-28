@@ -128,7 +128,7 @@ func (cw *CodeWriter) WriteGoto(funcName, label string) error {
 func (cw *CodeWriter) WriteFunction(funcName string, numLocals int) error {
 	lclinit := make([]string, numLocals)
 	for i := 0; i < numLocals; i++ {
-		lclinit[i] = fmt.Sprintf(strings.Join(asmPushLATT, "\n"), i, "LCL")
+		lclinit[i] = strings.Join(asmPushDToStack, "\n")
 	}
 
 	asm := fmt.Sprintf(strings.Join(asmFunction, "\n"), funcName, strings.Join(lclinit, "\n"))

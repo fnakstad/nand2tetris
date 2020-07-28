@@ -56,6 +56,8 @@ M=D
 
 // function Main.fibonacci 0
 (Main.fibonacci)
+@0
+D=A
 
 
 // push argument 0
@@ -377,6 +379,8 @@ A=M
 
 // function Sys.init 0
 (Sys.init)
+@0
+D=A
 
 
 // push constant 4
