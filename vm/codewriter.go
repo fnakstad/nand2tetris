@@ -100,21 +100,21 @@ func (cw *CodeWriter) WritePushPop(cmdType CommandType, segmentType SegmentType,
 	return cw.writeCommand(asm)
 }
 
-func (cw *CodeWriter) WriteLabel(label string) error {
-	// TODO: Scope to function
-	asm := fmt.Sprintf(strings.Join(asmLabel, "\n"), label)
+func (cw *CodeWriter) WriteLabel(funcName, label string) error {
+	nsLabel := getNamespacedLabel(funcName, label)
+	asm := fmt.Sprintf(strings.Join(asmLabel, "\n"), nsLabel)
 	return cw.writeCommand(asm)
 }
 
-func (cw *CodeWriter) WriteIf(label string) error {
-	// TODO: Scope to function
-	asm := fmt.Sprintf(strings.Join(asmIf, "\n"), label)
+func (cw *CodeWriter) WriteIf(funcName, label string) error {
+	nsLabel := getNamespacedLabel(funcName, label)
+	asm := fmt.Sprintf(strings.Join(asmIf, "\n"), nsLabel)
 	return cw.writeCommand(asm)
 }
 
-func (cw *CodeWriter) WriteGoto(label string) error {
-	// TODO: Scope to function
-	asm := fmt.Sprintf(strings.Join(asmGoto, "\n"), label)
+func (cw *CodeWriter) WriteGoto(funcName, label string) error {
+	nsLabel := getNamespacedLabel(funcName, label)
+	asm := fmt.Sprintf(strings.Join(asmGoto, "\n"), nsLabel)
 	return cw.writeCommand(asm)
 }
 
@@ -137,6 +137,10 @@ func (cw *CodeWriter) WriteCall(funcName string, numArgs int) error {
 	returnAddress := fmt.Sprintf("return_%s", funcName) // TODO: fix this
 	asm := fmt.Sprintf(strings.Join(asmCall, "\n"), returnAddress, funcName, numArgs)
 	return cw.writeCommand(asm)
+}
+
+func getNamespacedLabel(funcName, label string) string {
+	return fmt.Sprintf("%s$%s", funcName, label)
 }
 
 func (cw *CodeWriter) writeCommand(cmd string) error {

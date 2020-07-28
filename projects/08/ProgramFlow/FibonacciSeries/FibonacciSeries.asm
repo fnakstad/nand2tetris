@@ -103,7 +103,7 @@ D=M
 A=M
 M=D
 // label
-(MAIN_LOOP_START)
+(global$MAIN_LOOP_START)
 // push
 @ARG
 D=M
@@ -119,12 +119,12 @@ M=M+1
 @SP
 AM=M-1
 D=M
-@COMPUTE_ELEMENT
+@global$COMPUTE_ELEMENT
 D;JGT
 // goto
-@END_PROGRAM
+@global$END_PROGRAM
 0;JMP// label
-(COMPUTE_ELEMENT)
+(global$COMPUTE_ELEMENT)
 // push
 @THAT
 D=M
@@ -243,6 +243,6 @@ D=M
 A=M
 M=D
 // goto
-@MAIN_LOOP_START
+@global$MAIN_LOOP_START
 0;JMP// label
-(END_PROGRAM)
+(global$END_PROGRAM)

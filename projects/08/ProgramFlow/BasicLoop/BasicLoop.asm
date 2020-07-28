@@ -20,7 +20,7 @@ D=M
 A=M
 M=D
 // label
-(LOOP_START)
+(global$LOOP_START)
 // push
 @ARG
 D=M
@@ -115,7 +115,7 @@ M=M+1
 @SP
 AM=M-1
 D=M
-@LOOP_START
+@global$LOOP_START
 D;JGT
 // push
 @LCL

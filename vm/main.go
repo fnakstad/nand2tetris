@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	vmext = ".vm"
+	vmext          = ".vm"
+	globalFuncName = "global"
 )
 
 func main() {
@@ -53,6 +54,7 @@ func processVMFile(vmfile string, cw *CodeWriter) error {
 	defer f.Close()
 
 	p := NewParser(f)
+	currentFunc := globalFuncName // tracks which function is currently being processed
 	for p.Parse() {
 		if _, ok := arithmeticCommand[p.CommandType()]; ok {
 			cmdType := CommandType(p.Arg1())
@@ -69,17 +71,17 @@ func processVMFile(vmfile string, cw *CodeWriter) error {
 				return err
 			}
 		case CommandTypeLabel:
-			err := cw.WriteLabel(p.Arg1())
+			err := cw.WriteLabel(currentFunc, p.Arg1())
 			if err != nil {
 				return err
 			}
 		case CommandTypeIf:
-			err := cw.WriteIf(p.Arg1())
+			err := cw.WriteIf(currentFunc, p.Arg1())
 			if err != nil {
 				return err
 			}
 		case CommandTypeGoto:
-			err := cw.WriteGoto(p.Arg1())
+			err := cw.WriteGoto(currentFunc, p.Arg1())
 			if err != nil {
 				return err
 			}
@@ -88,11 +90,14 @@ func processVMFile(vmfile string, cw *CodeWriter) error {
 			if err != nil {
 				return err
 			}
+			currentFunc = p.Arg1()
 		case CommandTypeReturn:
 			err := cw.WriteReturn()
 			if err != nil {
 				return err
 			}
+			// nested function declarations not allowed, so jut revert to global
+			currentFunc = globalFuncName
 		case CommandTypeCall:
 			err := cw.WriteCall(p.Arg1(), p.Arg2())
 			if err != nil {
