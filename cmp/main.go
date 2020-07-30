@@ -36,6 +36,32 @@ func main() {
 		log.Fatalf("error creating out file: %v", err)
 	}
 	defer outf.Close()
+
+	for _, jackFile := range jackFiles {
+		if err := processJackFile(jackFile); err != nil {
+			log.Fatalf("error processing jack file: %v", err)
+		}
+	}
+}
+
+func processJackFile(jackFile string) error {
+	log.Println(jackFile)
+
+	f, err := os.Open(jackFile)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	t := NewTokenizer(f)
+	for t.Next() {
+		log.Println(t.Input())
+	}
+	if t.Err() != nil {
+		return t.Err()
+	}
+
+	return nil
 }
 
 func getFilesWithExtension(p, validExt string) ([]string, error) {
