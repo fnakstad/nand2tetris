@@ -4,13 +4,22 @@ type TokenType string
 type Keyword string
 type Symbol rune
 
+type Token struct {
+	Type       TokenType
+	Keyword    Keyword
+	Symbol     Symbol
+	Identifier string
+	IntVal     int
+	StringVal  string
+}
+
 const (
 	TokenTypeUnknown     TokenType = ""
-	TokenTypeKeyword               = "KEYWORD"
-	TokenTypeSymbol                = "SYMBOL"
-	TokenTypeIdentifier            = "IDENTIFIER"
-	TokenTypeIntConst              = "INT_CONST"
-	TokenTypeStringConst           = "STRING_CONST"
+	TokenTypeKeyword               = "keyword"
+	TokenTypeSymbol                = "symbol"
+	TokenTypeIdentifier            = "identifier"
+	TokenTypeIntConst              = "integerConstant"
+	TokenTypeStringConst           = "stringConstant"
 
 	KeywordUnknown     Keyword = ""
 	KeywordClass               = "class"

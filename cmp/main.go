@@ -3,14 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path"
 )
 
 var (
-	inFlag  = flag.String("in", "", ".jack file or directory to process")
-	outFlag = flag.String("out", "", "file to save the resulting .xml file")
+	inFlag   = flag.String("in", "", ".jack file or directory to process")
+	toutFlag = flag.String("tout", "", "file to save the resulting tokens .xml file")
 )
 
 func main() {
@@ -18,8 +19,8 @@ func main() {
 	if *inFlag == "" {
 		log.Fatalf("-in flag is required")
 	}
-	if *outFlag == "" {
-		log.Fatalf("-out flag is required")
+	if *toutFlag == "" {
+		log.Fatalf("-tout flag is required")
 	}
 
 	jackFiles, err := getFilesWithExtension(*inFlag, ".jack")
@@ -31,20 +32,20 @@ func main() {
 		log.Fatal("no jack files to handle")
 	}
 
-	outf, err := os.Create(*outFlag)
+	toutf, err := os.Create(*toutFlag)
 	if err != nil {
 		log.Fatalf("error creating out file: %v", err)
 	}
-	defer outf.Close()
+	defer toutf.Close()
 
 	for _, jackFile := range jackFiles {
-		if err := processJackFile(jackFile); err != nil {
+		if err := processJackFile(jackFile, toutf); err != nil {
 			log.Fatalf("error processing jack file: %v", err)
 		}
 	}
 }
 
-func processJackFile(jackFile string) error {
+func processJackFile(jackFile string, w io.Writer) error {
 	log.Println(jackFile)
 
 	f, err := os.Open(jackFile)
@@ -54,11 +55,17 @@ func processJackFile(jackFile string) error {
 	defer f.Close()
 
 	t := NewTokenizer(f)
+	tokens := make([]Token, 0)
 	for t.Next() {
-		//log.Println(t.Input())
+		tokens = append(tokens, t.Token())
 	}
 	if t.Err() != nil {
 		return t.Err()
+	}
+
+	err = MarshalTokens(tokens, w)
+	if err != nil {
+		return err
 	}
 
 	return nil

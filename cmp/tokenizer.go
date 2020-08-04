@@ -24,12 +24,7 @@ type Tokenizer struct {
 	err     error
 	text    string
 
-	tokenType  TokenType
-	keyword    Keyword
-	symbol     Symbol
-	identifier string
-	intVal     int
-	stringVal  string
+	token Token
 }
 
 func NewTokenizer(r io.Reader) *Tokenizer {
@@ -38,45 +33,16 @@ func NewTokenizer(r io.Reader) *Tokenizer {
 	}
 }
 
+func (t *Tokenizer) Token() Token {
+	return t.token
+}
+
 func (t *Tokenizer) Err() error {
 	return t.err
 }
 
-func (t *Tokenizer) TokenType() TokenType {
-	return t.tokenType
-}
-
-func (t *Tokenizer) Keyword() Keyword {
-	return t.keyword
-}
-
-func (t *Tokenizer) Symbol() Symbol {
-	return t.symbol
-}
-
-func (t *Tokenizer) Identifier() string {
-	return t.identifier
-}
-
-func (t *Tokenizer) IntVal() int {
-	return t.intVal
-}
-
-func (t *Tokenizer) StringVal() string {
-	return t.stringVal
-}
-
-// func (t *Tokenizer) Input() string {
-// 	return t.input
-// }
-
 func (t *Tokenizer) resetProps() {
-	t.tokenType = TokenTypeUnknown
-	t.keyword = KeywordUnknown
-	t.symbol = 0
-	t.identifier = ""
-	t.intVal = 0
-	t.stringVal = ""
+	t.token = Token{}
 }
 
 func isSymbol(r rune) bool {
@@ -114,12 +80,12 @@ func (t *Tokenizer) Next() bool {
 	// Scan line for tokens
 	advance := 0
 	if isSymbol(rune(t.text[0])) {
-		t.tokenType = TokenTypeSymbol
-		t.symbol = Symbol(t.text[0])
+		t.token.Type = TokenTypeSymbol
+		t.token.Symbol = Symbol(t.text[0])
 		advance = 1
 	} else if ok, kw := startsWithKeyword(t.text); ok {
-		t.tokenType = TokenTypeKeyword
-		t.keyword = kw
+		t.token.Type = TokenTypeKeyword
+		t.token.Keyword = kw
 		advance = len(kw)
 	} else if rune(t.text[0]) == '"' {
 		i := strings.Index(t.text[1:], "\"")
@@ -128,21 +94,21 @@ func (t *Tokenizer) Next() bool {
 			return false
 		}
 		val := t.text[1 : i+1] /* Strip double quotes */
-		t.tokenType = TokenTypeStringConst
-		t.stringVal = val
+		t.token.Type = TokenTypeStringConst
+		t.token.StringVal = val
 		advance = i + 2
 	} else if loc := intRegexp.FindStringIndex(t.text); loc != nil {
-		t.tokenType = TokenTypeIntConst
+		t.token.Type = TokenTypeIntConst
 		val, err := strconv.Atoi(t.text[loc[0]:loc[1]])
 		if err != nil {
 			t.err = errors.New("couldn't convert int const")
 		}
-		t.intVal = val
+		t.token.IntVal = val
 		advance = loc[1]
 	} else if loc := idRegexp.FindStringIndex(t.text); loc != nil {
 		val := t.text[loc[0]:loc[1]]
-		t.tokenType = TokenTypeIdentifier
-		t.identifier = val
+		t.token.Type = TokenTypeIdentifier
+		t.token.Identifier = val
 		advance = loc[1]
 	} else {
 		t.err = errors.New("invalid token")
