@@ -55,7 +55,7 @@ func processJackFile(jackFile string) error {
 
 	t := NewTokenizer(f)
 	for t.Next() {
-		log.Println(t.Input())
+		//log.Println(t.Input())
 	}
 	if t.Err() != nil {
 		return t.Err()
