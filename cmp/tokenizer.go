@@ -13,7 +13,7 @@ import (
 
 var (
 	lineCommentRegexp  = regexp.MustCompile(`^\/\/.*\n$`)
-	blockCommentRegexp = regexp.MustCompile(`^/\*(.*?)\*/$`)
+	blockCommentRegexp = regexp.MustCompile(`^\/\*(.*\n*)*\*\/$`)
 	stringRegexp       = regexp.MustCompile(`^\".*\"$`)
 	intRegexp          = regexp.MustCompile(`^[0-9]+$`)
 	idRegexp           = regexp.MustCompile(`^[A-Za-z_]+[A-Za-z0-9_]*$`)
@@ -29,13 +29,13 @@ type Tokenizer struct {
 
 func NewTokenizer(r io.Reader) *Tokenizer {
 	s := bufio.NewScanner(r)
-	s.Split(split)
+	s.Split(ScanJackTokens)
 	return &Tokenizer{
 		scanner: s,
 	}
 }
 
-func split(data []byte, atEOF bool) (advance int, token []byte, err error) {
+func ScanJackTokens(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	if len(data) <= 0 {
 		return 0, nil, nil
 	}

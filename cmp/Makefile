@@ -14,3 +14,9 @@ compile:
 .PHONY: test
 test:
 	${CMP_TOOL} ${PROJECTS_DIR}/10/ArrayTest/MainT_.xml ${PROJECTS_DIR}/10/ArrayTest/MainT.xml
+	${CMP_TOOL} ${PROJECTS_DIR}/10/Square/MainT_.xml ${PROJECTS_DIR}/10/Square/MainT.xml
+	${CMP_TOOL} ${PROJECTS_DIR}/10/Square/SquareT_.xml ${PROJECTS_DIR}/10/Square/SquareT.xml
+	${CMP_TOOL} ${PROJECTS_DIR}/10/Square/SquareGameT_.xml ${PROJECTS_DIR}/10/Square/SquareGameT.xml
+	${CMP_TOOL} ${PROJECTS_DIR}/10/ExpressionLessSquare/MainT_.xml ${PROJECTS_DIR}/10/ExpressionLessSquare/MainT.xml
+	${CMP_TOOL} ${PROJECTS_DIR}/10/ExpressionLessSquare/SquareT_.xml ${PROJECTS_DIR}/10/ExpressionLessSquare/SquareT.xml
+	${CMP_TOOL} ${PROJECTS_DIR}/10/ExpressionLessSquare/SquareGameT_.xml ${PROJECTS_DIR}/10/ExpressionLessSquare/SquareGameT.xml
