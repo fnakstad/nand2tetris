@@ -8,16 +8,15 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-)
-
-const (
-	commentPrefix = "//"
+	"unicode"
 )
 
 var (
-	blockCommentRegexp = regexp.MustCompile(`/\*(.*?)\*/`)
-	intRegexp          = regexp.MustCompile(`^[0-9]+`)
-	idRegexp           = regexp.MustCompile(`^[A-Za-z_]+[A-Za-z0-9_]*`)
+	lineCommentRegexp  = regexp.MustCompile(`^\/\/.*\n$`)
+	blockCommentRegexp = regexp.MustCompile(`^/\*(.*?)\*/$`)
+	stringRegexp       = regexp.MustCompile(`^\".*\"$`)
+	intRegexp          = regexp.MustCompile(`^[0-9]+$`)
+	idRegexp           = regexp.MustCompile(`^[A-Za-z_]+[A-Za-z0-9_]*$`)
 )
 
 type Tokenizer struct {
@@ -29,9 +28,77 @@ type Tokenizer struct {
 }
 
 func NewTokenizer(r io.Reader) *Tokenizer {
+	s := bufio.NewScanner(r)
+	s.Split(split)
 	return &Tokenizer{
-		scanner: bufio.NewScanner(r),
+		scanner: s,
 	}
+}
+
+func split(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	if len(data) <= 0 {
+		return 0, nil, nil
+	}
+
+	// Skip whitespace
+	start := 0
+	for start < len(data) && unicode.IsSpace(rune(data[start])) {
+		start++
+	}
+
+	if len(data[start:]) <= 0 { // Need more data...
+		return 0, nil, nil
+	}
+
+	// Check for comments
+	if rune(data[start]) == '/' {
+		if len(data[start:]) < 2 {
+			return 0, nil, nil
+		}
+
+		if rune(data[start+1]) == '/' { // single-line comment
+			if end := strings.Index(string(data[start:]), "\n"); end != -1 {
+				return start + end + 1, data[start : start+end+1], nil
+			}
+			return 0, nil, nil
+		}
+
+		if rune(data[start+1]) == '*' { // block comment
+			if end := strings.Index(string(data[start:]), "*/"); end != -1 {
+				return start + end + 2, data[start : start+end+2], nil
+			}
+			return 0, nil, nil
+		}
+
+		// So, should be a '/' symbol. Just let fall through
+	}
+
+	// Check for string constants
+	if rune(data[start]) == '"' {
+		if end := strings.Index(string(data[start+1:]), "\""); end != -1 {
+			return start + end + 2, data[start : start+end+2], nil
+		}
+		return 0, nil, nil
+	}
+
+	// Check for symbols
+	if isSymbol(rune(data[start])) {
+		return start + 1, []byte{data[start]}, nil
+	}
+
+	// Otherwise just split on next space/symbol
+	if end := strings.IndexFunc(string(data[start:]), func(r rune) bool {
+		return unicode.IsSpace(r) || isSymbol(r)
+	}); end != -1 {
+		return start + end, data[start : start+end], nil
+	}
+
+	if atEOF {
+		return len(data), data, nil
+	}
+
+	// Not enough data?
+	return 0, nil, nil
 }
 
 func (t *Tokenizer) Token() Token {
@@ -44,6 +111,53 @@ func (t *Tokenizer) Err() error {
 
 func (t *Tokenizer) resetProps() {
 	t.token = Token{}
+	t.text = ""
+}
+
+func (t *Tokenizer) Next() bool {
+	t.resetProps()
+
+	skip := true
+	for skip {
+		if done := t.scanner.Scan(); !done {
+			t.err = t.scanner.Err()
+			return false
+		}
+
+		t.text = t.scanner.Text()
+
+		// Skip comments
+		if !blockCommentRegexp.MatchString(t.text) && !lineCommentRegexp.MatchString(t.text) {
+			skip = false
+		}
+	}
+
+	switch {
+	case isSymbol(rune(t.text[0])):
+		t.token.Type = TokenTypeSymbol
+		t.token.Symbol = Symbol(t.text[0])
+	case isKeyword(t.text):
+		t.token.Type = TokenTypeKeyword
+		t.token.Keyword = Keyword(t.text)
+	case stringRegexp.MatchString(t.text):
+		t.token.Type = TokenTypeStringConst
+		t.token.StringVal = t.text[1 : len(t.text)-1]
+	case intRegexp.MatchString(t.text):
+		val, err := strconv.Atoi(t.text)
+		if err != nil {
+			t.err = errors.New("couldn't convert int const")
+		}
+		t.token.Type = TokenTypeIntConst
+		t.token.IntVal = val
+	case idRegexp.MatchString(t.text):
+		t.token.Type = TokenTypeIdentifier
+		t.token.Identifier = t.text
+	default:
+		t.err = fmt.Errorf("invalid token: %s", t.text)
+		return false
+	}
+
+	return true
 }
 
 func isSymbol(r rune) bool {
@@ -51,81 +165,7 @@ func isSymbol(r rune) bool {
 	return ok
 }
 
-func startsWithKeyword(w string) (bool, Keyword) {
-	for _, kw := range Keywords {
-		// TODO: identifiers starting with keywords...
-		if strings.HasPrefix(w, string(kw)) {
-			return true, kw
-		}
-	}
-	return false, KeywordUnknown
-}
-
-func isSpace(r rune) bool {
-	return r == ' ' || r == '\t' //|| r == '\n'
-}
-
-func (t *Tokenizer) Next() bool {
-	t.resetProps()
-
-	for t.text == "" {
-		if done := t.scanner.Scan(); !done {
-			t.err = t.scanner.Err()
-			return false
-		}
-
-		t.text = t.scanner.Text()
-		t.text = stripCommentsAndWhitespace(t.text)
-	}
-
-	// Scan line for tokens
-	advance := 0
-	if isSymbol(rune(t.text[0])) {
-		t.token.Type = TokenTypeSymbol
-		t.token.Symbol = Symbol(t.text[0])
-		advance = 1
-	} else if ok, kw := startsWithKeyword(t.text); ok {
-		t.token.Type = TokenTypeKeyword
-		t.token.Keyword = kw
-		advance = len(kw)
-	} else if rune(t.text[0]) == '"' {
-		i := strings.Index(t.text[1:], "\"")
-		if i == -1 {
-			t.err = fmt.Errorf("invalid token: %s", t.text)
-			return false
-		}
-		val := t.text[1 : i+1] /* Strip double quotes */
-		t.token.Type = TokenTypeStringConst
-		t.token.StringVal = val
-		advance = i + 2
-	} else if loc := intRegexp.FindStringIndex(t.text); loc != nil {
-		t.token.Type = TokenTypeIntConst
-		val, err := strconv.Atoi(t.text[loc[0]:loc[1]])
-		if err != nil {
-			t.err = errors.New("couldn't convert int const")
-		}
-		t.token.IntVal = val
-		advance = loc[1]
-	} else if loc := idRegexp.FindStringIndex(t.text); loc != nil {
-		val := t.text[loc[0]:loc[1]]
-		t.token.Type = TokenTypeIdentifier
-		t.token.Identifier = val
-		advance = loc[1]
-	} else {
-		t.err = fmt.Errorf("invalid token: %s", t.text)
-		return false
-	}
-	t.text = strings.TrimSpace(t.text[advance:])
-
-	return true
-}
-
-func stripCommentsAndWhitespace(text string) string {
-	if i := strings.Index(text, commentPrefix); i >= 0 {
-		text = text[:i]
-	}
-
-	text = blockCommentRegexp.ReplaceAllString(text, "")
-
-	return strings.TrimSpace(text)
+func isKeyword(s string) bool {
+	_, ok := KeywordsMap[s]
+	return ok
 }

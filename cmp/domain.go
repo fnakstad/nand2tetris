@@ -63,32 +63,10 @@ const (
 	SymbolLessThan                = '<'
 	SymbolMoreThan                = '>'
 	SymbolEqual                   = '='
+	SymbolNot                     = '~'
 )
 
 var (
-	Keywords = []Keyword{
-		KeywordClass,
-		KeywordMethod,
-		KeywordFunction,
-		KeywordConstructor,
-		KeywordInt,
-		KeywordBoolean,
-		KeywordChar,
-		KeywordVoid,
-		KeywordVar,
-		KeywordStatic,
-		KeywordField,
-		KeywordLet,
-		KeywordDo,
-		KeywordIf,
-		KeywordElse,
-		KeywordWhile,
-		KeywordReturn,
-		KeywordTrue,
-		KeywordFalse,
-		KeywordNull,
-		KeywordThis,
-	}
 	SymbolsMap = map[rune]struct{}{
 		SymbolLeftCurlyBrace:   struct{}{},
 		SymbolRightCurlyBrace:  struct{}{},
@@ -108,5 +86,29 @@ var (
 		SymbolLessThan:         struct{}{},
 		SymbolMoreThan:         struct{}{},
 		SymbolEqual:            struct{}{},
+		SymbolNot:              struct{}{},
+	}
+	KeywordsMap = map[string]struct{}{
+		KeywordClass:       struct{}{},
+		KeywordMethod:      struct{}{},
+		KeywordFunction:    struct{}{},
+		KeywordConstructor: struct{}{},
+		KeywordInt:         struct{}{},
+		KeywordBoolean:     struct{}{},
+		KeywordChar:        struct{}{},
+		KeywordVoid:        struct{}{},
+		KeywordVar:         struct{}{},
+		KeywordStatic:      struct{}{},
+		KeywordField:       struct{}{},
+		KeywordLet:         struct{}{},
+		KeywordDo:          struct{}{},
+		KeywordIf:          struct{}{},
+		KeywordElse:        struct{}{},
+		KeywordWhile:       struct{}{},
+		KeywordReturn:      struct{}{},
+		KeywordTrue:        struct{}{},
+		KeywordFalse:       struct{}{},
+		KeywordNull:        struct{}{},
+		KeywordThis:        struct{}{},
 	}
 )
