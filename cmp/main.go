@@ -9,9 +9,13 @@ import (
 	"path"
 )
 
+const (
+	jackExt          = ".jack"
+	tokensXMLPostfix = "T_.xml"
+)
+
 var (
-	inFlag   = flag.String("in", "", ".jack file or directory to process")
-	toutFlag = flag.String("tout", "", "file to save the resulting tokens .xml file")
+	inFlag = flag.String("in", "", ".jack file or directory to process")
 )
 
 func main() {
@@ -19,11 +23,8 @@ func main() {
 	if *inFlag == "" {
 		log.Fatalf("-in flag is required")
 	}
-	if *toutFlag == "" {
-		log.Fatalf("-tout flag is required")
-	}
 
-	jackFiles, err := getFilesWithExtension(*inFlag, ".jack")
+	jackFiles, err := getFilesWithExtension(*inFlag, jackExt)
 	if err != nil {
 		log.Fatalf("error getting files: %v", err)
 	}
@@ -32,13 +33,14 @@ func main() {
 		log.Fatal("no jack files to handle")
 	}
 
-	toutf, err := os.Create(*toutFlag)
-	if err != nil {
-		log.Fatalf("error creating out file: %v", err)
-	}
-	defer toutf.Close()
-
 	for _, jackFile := range jackFiles {
+		toutPath := fmt.Sprintf("%s%s", jackFile[:len(jackFile)-len(jackExt)], tokensXMLPostfix)
+		toutf, err := os.Create(toutPath)
+		if err != nil {
+			log.Fatalf("error creating out file: %v", err)
+		}
+		defer toutf.Close()
+
 		if err := processJackFile(jackFile, toutf); err != nil {
 			log.Fatalf("error processing jack file: %v", err)
 		}

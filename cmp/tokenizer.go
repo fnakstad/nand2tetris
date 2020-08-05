@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"regexp"
 	"strconv"
@@ -90,7 +91,7 @@ func (t *Tokenizer) Next() bool {
 	} else if rune(t.text[0]) == '"' {
 		i := strings.Index(t.text[1:], "\"")
 		if i == -1 {
-			t.err = errors.New("invalid token")
+			t.err = fmt.Errorf("invalid token: %s", t.text)
 			return false
 		}
 		val := t.text[1 : i+1] /* Strip double quotes */
@@ -111,7 +112,7 @@ func (t *Tokenizer) Next() bool {
 		t.token.Identifier = val
 		advance = loc[1]
 	} else {
-		t.err = errors.New("invalid token")
+		t.err = fmt.Errorf("invalid token: %s", t.text)
 		return false
 	}
 	t.text = strings.TrimSpace(t.text[advance:])

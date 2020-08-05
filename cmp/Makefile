@@ -7,7 +7,9 @@ all: compile test
 
 .PHONY: compile
 compile:
-	${GO_RUN} -in ${PROJECTS_DIR}/10/ArrayTest -tout ${PROJECTS_DIR}/10/ArrayTest/MainT_.xml
+	${GO_RUN} -in ${PROJECTS_DIR}/10/ArrayTest
+	${GO_RUN} -in ${PROJECTS_DIR}/10/ExpressionLessSquare
+	${GO_RUN} -in ${PROJECTS_DIR}/10/Square
 
 .PHONY: test
 test:
