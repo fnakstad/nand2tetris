@@ -50,20 +50,21 @@ func ScanJackTokens(data []byte, atEOF bool) (advance int, token []byte, err err
 		return 0, nil, nil
 	}
 
-	// Check for comments
-	if rune(data[start]) == '/' {
+	firstRune := rune(data[start])
+	if firstRune == '/' { // Either comment or '/' symbol
 		if len(data[start:]) < 2 {
 			return 0, nil, nil
 		}
+		secondRune := rune(data[start+1])
 
-		if rune(data[start+1]) == '/' { // single-line comment
+		if secondRune == '/' { // single-line comment
 			if end := strings.Index(string(data[start:]), "\n"); end != -1 {
 				return start + end + 1, data[start : start+end+1], nil
 			}
 			return 0, nil, nil
 		}
 
-		if rune(data[start+1]) == '*' { // block comment
+		if secondRune == '*' { // block comment
 			if end := strings.Index(string(data[start:]), "*/"); end != -1 {
 				return start + end + 2, data[start : start+end+2], nil
 			}
@@ -73,20 +74,20 @@ func ScanJackTokens(data []byte, atEOF bool) (advance int, token []byte, err err
 		// So, should be a '/' symbol. Just let fall through
 	}
 
+	// Check for symbols
+	if isSymbol(firstRune) {
+		return start + 1, []byte{data[start]}, nil
+	}
+
 	// Check for string constants
-	if rune(data[start]) == '"' {
+	if firstRune == '"' {
 		if end := strings.Index(string(data[start+1:]), "\""); end != -1 {
 			return start + end + 2, data[start : start+end+2], nil
 		}
 		return 0, nil, nil
 	}
 
-	// Check for symbols
-	if isSymbol(rune(data[start])) {
-		return start + 1, []byte{data[start]}, nil
-	}
-
-	// Otherwise just split on next space/symbol
+	// Otherwise just split on next space/symbol (keywords + identifiers)
 	if end := strings.IndexFunc(string(data[start:]), func(r rune) bool {
 		return unicode.IsSpace(r) || isSymbol(r)
 	}); end != -1 {
